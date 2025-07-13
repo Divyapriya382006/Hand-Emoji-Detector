@@ -1,25 +1,21 @@
 import cv2
 import mediapipe as mp
 
-# Init mediapipe
 mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.7)  # We'll track only 1 hand
+hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.7) 
 mp_draw = mp.solutions.drawing_utils
 
-# Webcam
 cap = cv2.VideoCapture(0)
 
 def fingers_up(hand_landmarks):
     tips_ids = [4, 8, 12, 16, 20]
     fingers = []
 
-    # Thumb (a bit different logic)
     if hand_landmarks.landmark[tips_ids[0]].x < hand_landmarks.landmark[tips_ids[0] - 1].x:
         fingers.append(1)
     else:
         fingers.append(0)
 
-    # Other fingers
     for id in range(1, 5):
         if hand_landmarks.landmark[tips_ids[id]].y < hand_landmarks.landmark[tips_ids[id] - 2].y:
             fingers.append(1)
@@ -45,7 +41,6 @@ while True:
             fingers = fingers_up(handLms)
             total_fingers = fingers.count(1)
 
-            # Decide emoji
             if total_fingers == 0:
                 emoji_text = "Punch"
             elif total_fingers == 5:
